@@ -1,3 +1,4 @@
+import defaultimage from "../../assets/defaultimage.svg";
 import styles from "./Card.module.scss";
 
 type CardProps = {
@@ -16,9 +17,18 @@ const Card = ({
   return (
     <div className={styles.cardWrapper}>
       <div className={styles.infoWrapper}>
-        <img className={styles.image} src={missionPatch} />
+        <img
+          className={styles.image}
+          src={
+            missionPatch && missionPatch.trim() !== ""
+              ? missionPatch
+              : defaultimage
+          }
+        />
         <h3 className={styles.header}>{missionName}</h3>
-        <p className={styles.description}>{rocketName}</p>
+        <p className={styles.description}>
+          {rocketName ? rocketName : "Not found"}
+        </p>
       </div>
       <button onClick={onClick}>See more</button>
     </div>

@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
-import styles from "./Modal.module.scss";
+import { useEffect } from "react";
 import { createPortal } from "react-dom";
+import styles from "./Modal.module.scss";
 
 type ModalProps = {
   children: ReactNode;
@@ -10,6 +11,14 @@ type ModalProps = {
 const modalElement = document.getElementById("modal-root")!;
 
 const Modal = ({ children, onClose }: ModalProps) => {
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
+
   return createPortal(
     <div className={styles.backdrop} onClick={onClose}>
       <div className={styles.modal} role="modal">

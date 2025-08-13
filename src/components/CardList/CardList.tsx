@@ -1,14 +1,18 @@
 import Card from "../Card/Card";
-import styles from "./CardList.module.scss";
 import { useEffect, useReducer } from "react";
-import type { Launch } from "../../types/types";
+import { BASE_API } from "../../constants/api";
+import type { Launch, Action } from "../../types/types";
+import {
+  FETCH_SUCCESS,
+  FETCH_ERROR,
+  SELECT_LAUNCH,
+  CLEAR_SELECTION,
+} from "../../types/types";
 import Modal from "../Modal/Modal";
 import LaunchDetails from "../LaunchDetails/LaunchDetails";
-
-const FETCH_SUCCESS = "FETCH_SUCCESS";
-const FETCH_ERROR = "FETCH_ERROR";
-const SELECT_LAUNCH = "SELECT_LAUNCH";
-const CLEAR_SELECTION = "CLEAR_SELECTION";
+import ErrorMessage from "../ErrorMessage/ErrorMessage";
+import LoadingMessage from "../LoadingMessage/LoadingMessage";
+import styles from "./CardList.module.scss";
 
 type State = {
   launches: Launch[];
@@ -17,12 +21,6 @@ type State = {
   error: string | null;
 };
 
-type Action =
-  | { type: typeof FETCH_SUCCESS; payload: Launch[] }
-  | { type: typeof SELECT_LAUNCH; payload: Launch }
-  | { type: typeof CLEAR_SELECTION }
-  | { type: typeof FETCH_ERROR; payload: string };
-
 const reducer = (state: State, action: Action) => {
   switch (action.type) {
     case FETCH_SUCCESS:
@@ -30,6 +28,7 @@ const reducer = (state: State, action: Action) => {
         ...state,
         loading: false,
         launches: action.payload,
+        error: null,
       };
 
     case SELECT_LAUNCH:
@@ -48,6 +47,7 @@ const reducer = (state: State, action: Action) => {
       return {
         ...state,
         error: action.payload,
+        loading: false,
       };
 
     default:
@@ -68,9 +68,14 @@ const CardList = () => {
   useEffect(() => {
     const fetchFunc = async () => {
       try {
-        const response = await fetch(
-          "https://api.spacexdata.com/v3/launches?launch_year=2020"
-        );
+        const response = await fetch(BASE_API);
+
+        console.log(response);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
         const resJson = await response.json();
         console.log(resJson);
         dispatch({
@@ -101,28 +106,32 @@ const CardList = () => {
   };
 
   return (
-    <div className={styles.listWrapper}>
-      {state.launches.map((launch) => {
-        return (
-          <Card
-            key={launch.mission_name}
-            missionPatch={launch.links?.mission_patch_small}
-            missionName={launch.mission_name}
-            rocketName={launch.rocket?.rocket_name}
-            onClick={() => handleSelect(launch)}
-          />
-        );
-      })}
-      {state.selectedLaunch && (
-        <Modal onClose={handleCloseSelect}>
-          <LaunchDetails
-            onClose={handleCloseSelect}
-            selectedLaunch={state.selectedLaunch}
-          />
-        </Modal>
-      )}
-      ;
-    </div>
+    <>
+      {state.loading && <LoadingMessage />}
+      {state.error && <ErrorMessage error={state.error} />}
+      <div className={styles.listWrapper}>
+        {state.launches.map((launch) => {
+          return (
+            <Card
+              key={launch.mission_name}
+              missionPatch={launch.links?.mission_patch_small}
+              missionName={launch.mission_name}
+              rocketName={launch.rocket?.rocket_name}
+              onClick={() => handleSelect(launch)}
+            />
+          );
+        })}
+
+        {state.selectedLaunch && (
+          <Modal onClose={handleCloseSelect}>
+            <LaunchDetails
+              onClose={handleCloseSelect}
+              selectedLaunch={state.selectedLaunch}
+            />
+          </Modal>
+        )}
+      </div>
+    </>
   );
 };
 

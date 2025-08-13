@@ -1,4 +1,5 @@
 import type { Launch } from "../../types/types";
+import defaultimage from "../../assets/defaultimage.svg";
 import styles from "./LaunchDetails.module.scss";
 
 type LaunchDetailsProps = {
@@ -22,7 +23,11 @@ const LaunchDetails = ({ selectedLaunch, onClose }: LaunchDetailsProps) => {
       <div className={styles.mainContent}>
         <img
           className={styles.modalImage}
-          src={selectedLaunch.links?.mission_patch}
+          src={
+            selectedLaunch.links?.mission_patch
+              ? selectedLaunch.links?.mission_patch
+              : defaultimage
+          }
           alt="mission patch"
         />
         <div className={styles.infoWrapper}>
@@ -34,13 +39,15 @@ const LaunchDetails = ({ selectedLaunch, onClose }: LaunchDetailsProps) => {
         <div className={styles.infoWrapper}>
           <div className={styles.modalInfoHeader}>Rocket name:</div>
           <div className={styles.modalInfoDescription}>
-            {selectedLaunch.rocket?.rocket_name}
+            {selectedLaunch.rocket?.rocket_name
+              ? selectedLaunch.rocket?.rocket_name
+              : "Not found"}
           </div>
         </div>
         <div className={styles.infoWrapper}>
           <div className={styles.modalInfoHeader}>Details:</div>
           <div className={styles.modalInfoDescription}>
-            {selectedLaunch.details}
+            {selectedLaunch.details ? selectedLaunch.details : "Not found"}
           </div>
         </div>
       </div>

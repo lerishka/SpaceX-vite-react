@@ -1,5 +1,5 @@
-import styles from "./App.module.scss";
 import CardList from "../CardList/CardList";
+import styles from "./App.module.scss";
 
 function App() {
   return (
