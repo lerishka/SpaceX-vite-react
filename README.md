@@ -74,3 +74,16 @@ describe("CardList testing", () => {
   });
 });
 
+
+Вот текст ошибки теста:
+
+Error: Target container is not a DOM element.
+ ❯ process.env.NODE_ENV.exports.createPortal node_modules/react-dom/cjs/react-dom.development.js:128:15
+ ❯ Modal src/components/Modal/Modal.tsx:13:10
+     11| 
+     12| const Modal = ({ children, onClose }: ModalProps) => {
+     13|   return createPortal(
+       |          ^
+     14|     <div className={styles.backdrop} onClick={onClose}>
+     15|       <div className={styles.modal} role="modal">
+
