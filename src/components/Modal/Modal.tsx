@@ -21,7 +21,11 @@ const Modal = ({ children, onClose }: ModalProps) => {
 
   return createPortal(
     <div className={styles.backdrop} onClick={onClose}>
-      <div className={styles.modal} role="modal">
+      <div
+        className={styles.modal}
+        role="modal"
+        onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
+      >
         {children}
       </div>
     </div>,
